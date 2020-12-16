@@ -60,7 +60,7 @@ public class RequestHandler
 	public Response mockCrawlQuery()
 	{
 		// String givenUrl = "invalid_url"; // 404 test: FAILURE!
-		// String givenUrl = "https://www.example.com/";
+		// String givenUrl = "http://www.example.com/";
 		String givenUrl = "https://en.wikipedia.org/wiki/Main_Page";
 
 		int maxWebPagesToVisit = 3;

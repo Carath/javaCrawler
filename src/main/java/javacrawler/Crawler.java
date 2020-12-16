@@ -49,11 +49,13 @@ public class Crawler
 	}
 
 
+	// Can be sometimes too strict, but better than nothing.
 	public static Boolean isFile(String url)
 	{
-		int offset = url.indexOf("//");
-		offset = url.indexOf("/", offset + 2);
-		return url.indexOf(".", offset + 1) != -1;
+		int offset_1 = url.indexOf("//");
+		int offset_2 = url.indexOf("/", offset_1 + 2);
+		int offset_3 = url.indexOf(".", offset_2 + 1);
+		return offset_1 != -1 && offset_2 != -1 && offset_3 != -1;
 	}
 
 
@@ -148,8 +150,8 @@ public class Crawler
 
 	public static void main(String[] args) {
 
-		// String givenUrl = "https://www.example.com/";
-		// String givenUrl = "https://www.example.com/test"; // 404 test
+		// String givenUrl = "http://www.example.com/";
+		// String givenUrl = "http://www.example.com/test"; // 404 test
 		String givenUrl = "https://en.wikipedia.org/wiki/Main_Page";
 
 		//////////////////////////////////////////////////////////////////
@@ -177,5 +179,7 @@ public class Crawler
 		// for (PageData pageData : pageDataList) {
 		// 	pageData.print();
 		// }
+
+		//////////////////////////////////////////////////////////////////
 	}
 }
