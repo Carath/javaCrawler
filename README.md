@@ -51,7 +51,6 @@ Once the project is done, and needs to be deployed e.g on a server, java and mav
 
 ## TODO:
 
-- Add an adaptative waiting mode;
 - Restrict domain names for crawling;
 - Check URLs beforehand for correctness and early detection of files, in order to not try to retrieve their content.
 - Do some extensive testing, in order to be sure the app doesn't break on invalid POST queries;

@@ -5,18 +5,23 @@ import java.util.ArrayList;
 
 public class Crawler
 {
-	public static final long COOLDOWN = 500; // in milliseconds.
+	public static final Boolean ADAPTATIVE_WAITING = true;
+	public static final double COOLDOWN = 1.0; // in seconds.
 
 	public static final SearchQuery LANG_QUERY = new SearchQuery("lang", "lang=\"", "\"", "", "");
 	public static final SearchQuery PAGE_TITLE_QUERY = new SearchQuery("pageTitle", "<title>", "</title>", "", "");
 	public static final SearchQuery LINKS_QUERY = new SearchQuery("links", "\"http", "\"", "http", "");
 
 
-	// 'cooldown' in milliseconds
-	public static void waiting(long cooldown)
+	// Waits for the given amount of time. Values in seconds.
+	public static void waiting(double cooldown)
 	{
+		double timeToWait = Math.max(0, cooldown);
+		System.out.printf("Waiting for: %.3f s\n\n", timeToWait);
+		long usedCooldown = (long) (timeToWait * 1000); // in milliseconds
+
 		try {
-			Thread.sleep(cooldown);
+			Thread.sleep(usedCooldown);
 		}
 		catch (InterruptedException e) {
 			System.out.println("An error happened while waiting...");
@@ -46,6 +51,8 @@ public class Crawler
 
 	public static ArrayList<PageData> crawl(String url, int maxWebPagesToVisit, ArrayList<SearchQuery> userQueryList)
 	{
+		System.out.printf("\nCrawling starts:\n\n");
+
 		ArrayList<SearchQuery> queryList = new ArrayList<>();
 		queryList.add(LANG_QUERY);
 		queryList.add(PAGE_TITLE_QUERY);
@@ -63,6 +70,8 @@ public class Crawler
 		int visitedPageIndex = 0, urlIndex = 0;
 		for (; visitedPageIndex < maxWebPagesToVisit && urlIndex < urlArray.size(); ++urlIndex)
 		{
+			long startTime = System.nanoTime();
+
 			String currentUrl = urlArray.get(urlIndex); // TODO: add a check of correctness FOR EVERY URL!
 			System.out.printf("> Searching the page (rank %d): '%s'\n", urlIndex, currentUrl);
 			PageData pageData = new PageData(currentUrl);
@@ -110,7 +119,11 @@ public class Crawler
 			++visitedPageIndex;
 
 			if (maxWebPagesToVisit > 1) {
-				waiting(COOLDOWN);
+				long endTime = System.nanoTime();
+				double elapsedTime = (endTime - startTime) / 1e9;
+				// System.out.printf("\nElapsed time: %.3f s\n", elapsedTime);
+				double cooldown = ADAPTATIVE_WAITING ? COOLDOWN - elapsedTime : COOLDOWN;
+				waiting(cooldown);
 			}
 		}
 
