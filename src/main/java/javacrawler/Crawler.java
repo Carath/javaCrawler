@@ -49,6 +49,14 @@ public class Crawler
 	}
 
 
+	public static Boolean isFile(String url)
+	{
+		int offset = url.indexOf("//");
+		offset = url.indexOf("/", offset + 2);
+		return url.indexOf(".", offset + 1) != -1;
+	}
+
+
 	public static ArrayList<PageData> crawl(String url, int maxWebPagesToVisit, ArrayList<SearchQuery> userQueryList)
 	{
 		System.out.printf("\nCrawling starts:\n\n");
@@ -65,16 +73,22 @@ public class Crawler
 		ArrayList<PageData> pageDataList = new ArrayList<PageData>();
 
 		ArrayList<String> urlArray = new ArrayList<String>();
-		urlArray.add(cleanupUrl(url)); // TODO: add a check of correctness FOR EVERY URL!
+		urlArray.add(cleanupUrl(url));
 
 		int visitedPageIndex = 0, urlIndex = 0;
 		for (; visitedPageIndex < maxWebPagesToVisit && urlIndex < urlArray.size(); ++urlIndex)
 		{
 			long startTime = System.nanoTime();
 
-			String currentUrl = urlArray.get(urlIndex); // TODO: add a check of correctness FOR EVERY URL!
+			String currentUrl = urlArray.get(urlIndex);
+
+			if (isFile(currentUrl)) {
+				System.out.printf("Not crawling the file: '%s'\n\n", currentUrl);
+				continue;
+			}
+
 			System.out.printf("> Searching the page (rank %d): '%s'\n", urlIndex, currentUrl);
-			PageData pageData = new PageData(currentUrl);
+			PageData pageData = new PageData(currentUrl); // fetching the page content!
 			// System.out.println(pageData.getHtmlContent());
 
 			if (! pageData.getUrlValidity()) { // Invalid url. Don't continue on 404!

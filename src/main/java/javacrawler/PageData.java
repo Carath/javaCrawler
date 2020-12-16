@@ -69,30 +69,37 @@ public class PageData
 		}
 	}
 
+
+	public static URL getUrlObject(String url)
+	{
+		try {
+			return new URL(url);
+		}
+		catch (Exception e) {
+			System.err.printf("\nInvalid url: '%s'.\n", url);
+			return null;
+		}	
+	}
+
+
 	// Get the html content of the given web page.
 	// Returns null on invalid url, and "" on 404.
 	public static String getURLcontent(String url)
 	{
-		try {
-			URL urlObject = new URL(url);
-			String content = "";
+		URL urlObject = getUrlObject(url);
+		String content = "";
 
-			try (BufferedReader reader = new BufferedReader(new InputStreamReader(urlObject.openStream(), "UTF-8"))) {
-				for (String line; (line = reader.readLine()) != null;) {
-					content += line + "\n";
-				}
+		try (BufferedReader reader = new BufferedReader(new InputStreamReader(urlObject.openStream(), "UTF-8"))) {
+			for (String line; (line = reader.readLine()) != null;) {
+				content += line + "\n";
+			}
 
-				reader.close();
-				return content;
-			}
-			catch (Exception e) {
-				System.err.printf("\nPage '%s' not found.\n\n", url);
-				return "";
-			}
+			reader.close();
+			return content;
 		}
 		catch (Exception e) {
-			System.err.printf("\nInvalid url: '%s'.\n\n", url);
-			return null;
+			System.err.printf("\nPage '%s' not found.\n", url);
+			return "";
 		}
 	}
 }
