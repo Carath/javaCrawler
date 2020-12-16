@@ -58,4 +58,3 @@ Once the project is done, and needs to be deployed e.g on a server, java and mav
 - Return a correct HTTP status code in the previous case;
 - Add the feature to search for user given metadata during the crawling phase [mostly done, this just needs to be integrated to the API];
 - For now, HTML content of web pages is not returned as POST request answers, for testing purpose. Re-enable this in the future by modifying the OutputJson.java file;
-- Perhaps the searchMetaData() function could be simplified [low priority].

@@ -35,4 +35,9 @@ public class SearchQuery
 	public String getSuffix() {
 		return this.suffix;
 	}
+
+	public void print() {
+		System.out.printf("\n> SearchQuery:\n\n- Query name: %s\n- Start tag: %s\n- End tag: %s\n- Prefix: %s\n" +
+			"- Suffix: %s\n\n", this.queryName, this.startTag, this.endTag, this.prefix, this.suffix);
+	}
 }

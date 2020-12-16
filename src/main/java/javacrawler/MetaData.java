@@ -31,47 +31,60 @@ public class MetaData
 		}
 	}
 
-	// Simplify with indexOf ?
+
 	public static MetaData searchMetaData(String content, SearchQuery query)
 	{
 		MetaData metaData = new MetaData(query.getQueryName());
 
 		String startTag = query.getStartTag(), endTag = query.getEndTag();
-		int contentLength = content.length(), startTagLength = startTag.length(), endTagLength = endTag.length();
-		int endBound = contentLength - endTagLength, startIndex = 0;
+		int startTagLength = startTag.length(), endTagLength = endTag.length();
 
-		while (startIndex < contentLength)
+		if (startTagLength == 0 || endTagLength == 0) {
+			System.out.printf("\nOne tag is empty ('%s', '%s'). Stopping the search.\n", startTag, endTag);
+			return metaData;
+		}
+
+		int startIndex = 0;
+
+		while (true)
 		{
-			// Seeking the first delimiting tag:
-			if (! content.startsWith(startTag, startIndex)) {
-				++startIndex;
-				continue;
+			int startTagIndex = content.indexOf(startTag, startIndex);
+
+			if (startTagIndex == -1) {
+				// System.out.printf("\nEnd of file. Stopping the search.\n", endTag);
+				break;
 			}
 
-			int endIndex = startIndex + startTagLength;
+			int dataIndex = startTagIndex + startTagLength;
+			int endTagIndex = content.indexOf(endTag, dataIndex);
 
-			// Seeking the ending delimiting tag:
-			while (endIndex <= endBound && ! content.startsWith(endTag, endIndex)) {
-				++endIndex;
-			}
-
-			if (endIndex > endBound) {
-				System.out.printf("\nEnding tag '%s' not found! Stopping the search.\n", endTag);
-				return metaData;
+			if (endTagIndex == -1) {
+				// System.out.printf("\nEnding tag '%s' not found. Stopping the search.\n", endTag);
+				break;
 			}
 
 			// Adding the new data to the data list, if not already found:
-			int offset = startIndex + startTagLength;
-			String newData = query.getPrefix() + content.substring(offset, endIndex) + query.getSuffix();
+			String newData = query.getPrefix() + content.substring(dataIndex, endTagIndex) + query.getSuffix();
 
 			if (! metaData.dataList.contains(newData)) {
 				metaData.dataList.add(newData);
 				// System.out.println(newData);
 			}
 
-			startIndex = endIndex + endTagLength;
+			startIndex = endTagIndex + endTagLength;
 		}
 
 		return metaData;
+	}
+
+
+	public static void main(String[] args)
+	{
+		String content = "azertyhelloworldpoiuyhellowxcvbworld";
+		System.out.println("\nContent: " + content);
+		SearchQuery query = new SearchQuery("test", "hello", "world", "<<hello_", "_world>>");
+		query.print();
+		MetaData metaData = searchMetaData(content, query);
+		metaData.print();
 	}
 }
