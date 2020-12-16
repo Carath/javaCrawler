@@ -4,6 +4,7 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.*;
 import jakarta.json.*;
 import java.util.*;
+import java.io.*;
 
 
 // N.B: Do not put a main function here, it can't be run.
@@ -59,7 +60,7 @@ public class RequestHandler
 	@Path("mock")
 	public Response mockCrawlQuery()
 	{
-		// String givenUrl = "invalid_url"; // 404 test: FAILURE!
+		// String givenUrl = "invalid_url";
 		// String givenUrl = "http://www.example.com/";
 		String givenUrl = "https://en.wikipedia.org/wiki/Main_Page";
 
@@ -77,20 +78,27 @@ public class RequestHandler
 	@Path("crawler")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	// public Response crawlerAnswer(String givenUrl)
-	public Response crawlerAnswer(JsonObject jsonQuery)
+	public Response crawlerAnswer(String query)
 	{
-		String givenUrl = jsonQuery.getString("url"); // can fail!
-		// int maxWebPagesToVisit = Integer.parseInt(jsonQuery.getString("maxWebPagesToVisit")); // 2 failures possible!
-		int maxWebPagesToVisit = jsonQuery.getInt("maxWebPagesToVisit"); // 2 failures possible!
-		// int id = Integer.parseInt(jsonObj.get("id"));
-		// int id = jsonObj.getInt("id");
+		try
+		{
+			JsonReader reader = Json.createReader(new StringReader(query));
+			JsonObject jsonQuery = reader.readObject();
+			reader.close();
 
+			String givenUrl = jsonQuery.getString("url");
+			int maxWebPagesToVisit = jsonQuery.getInt("maxWebPagesToVisit");
 
-		ArrayList<SearchQuery> userQueryList = new ArrayList<SearchQuery>();
-		ArrayList<PageData> pageDataList = Crawler.crawl(givenUrl, maxWebPagesToVisit, userQueryList);
+			ArrayList<SearchQuery> userQueryList = new ArrayList<SearchQuery>();
+			ArrayList<PageData> pageDataList = Crawler.crawl(givenUrl, maxWebPagesToVisit, userQueryList);
 
-		JsonObject obj = OutputJson.jsonWebPages(pageDataList);
-		return Response.ok(obj).build();
+			JsonObject obj = OutputJson.jsonWebPages(pageDataList);
+			return Response.ok(obj).build();
+		}
+		catch (Exception e) {
+			// e.printStackTrace();
+			Response.Status status = Response.Status.BAD_REQUEST; // Equivalent to error 400
+			return Response.status(status).entity("Wrong query.").build();
+		}
 	}
 }

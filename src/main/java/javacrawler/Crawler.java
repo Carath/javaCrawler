@@ -6,7 +6,7 @@ import java.util.ArrayList;
 public class Crawler
 {
 	public static final Boolean ADAPTATIVE_WAITING = true;
-	public static final double COOLDOWN = 1.0; // in seconds.
+	public static final double COOLDOWN = 0.5; // in seconds.
 
 	public static final SearchQuery LANG_QUERY = new SearchQuery("lang", "lang=\"", "\"", "", "");
 	public static final SearchQuery PAGE_TITLE_QUERY = new SearchQuery("pageTitle", "<title>", "</title>", "", "");

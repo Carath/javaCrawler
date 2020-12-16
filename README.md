@@ -51,7 +51,5 @@ Once the project is done, and needs to be deployed e.g on a server, java and mav
 
 ## TODO:
 
-- Restrict domain names for crawling;
-- Do some extensive testing, in order to be sure the app doesn't break on invalid POST queries;
-- Return a correct HTTP status code in the previous case;
 - Add the feature to search for user given metadata during the crawling phase [mostly done, this just needs to be integrated to the API];
+- Restrict domain names for crawling;
