@@ -6,6 +6,9 @@ import java.util.*;
 
 public class OutputJson
 {
+	public static final Boolean RETURN_HTML_CONTENT = true;
+
+
 	public static JsonObject jsonOfMetaData(MetaData metaData)
 	{
 		JsonArrayBuilder builder = Json.createArrayBuilder();
@@ -35,12 +38,13 @@ public class OutputJson
 		}
 
 		JsonArray array = builder.build();
+		String content = RETURN_HTML_CONTENT ? pageData.getHtmlContent() : "";
 
 		JsonObject obj = Json.createObjectBuilder()
 			.add("url", pageData.getUrl())
 			.add("lang", pageData.getLang())
 			.add("title", pageData.getTitle())
-			// .add("htmlContent", pageData.getHtmlContent())
+			.add("htmlContent", content)
 			.add("metaDataList", array)
 			.build();
 

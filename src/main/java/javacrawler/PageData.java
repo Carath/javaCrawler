@@ -82,11 +82,15 @@ public class PageData
 	}
 
 
-	// Get the html content of the given web page.
-	// Returns null on invalid url, and "" on 404.
+	// Get the html content of the given web page. Returns null on invalid url, and "" on 404.
 	public static String getURLcontent(String url)
 	{
 		URL urlObject = getUrlObject(url);
+
+		if (urlObject == null) {
+			return null; // used to set 'urlValidity' to false, an disable the crawling cooldown.
+		}
+
 		String content = "";
 
 		try (BufferedReader reader = new BufferedReader(new InputStreamReader(urlObject.openStream(), "UTF-8"))) {
