@@ -78,11 +78,11 @@ public class RequestHandler
 	@Path("crawler")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response crawlerAnswer(String query)
+	public Response crawlerAnswer(String stringQuery)
 	{
 		try
 		{
-			JsonReader reader = Json.createReader(new StringReader(query));
+			JsonReader reader = Json.createReader(new StringReader(stringQuery));
 			JsonObject jsonQuery = reader.readObject();
 			reader.close();
 
@@ -90,10 +90,32 @@ public class RequestHandler
 			int maxWebPagesToVisit = jsonQuery.getInt("maxWebPagesToVisit");
 
 			ArrayList<SearchQuery> userQueryList = new ArrayList<SearchQuery>();
+
+			try // trying to get user queries:
+			{
+				JsonArray queryArray = jsonQuery.getJsonArray("queries");
+
+				for (int i = 0; i < queryArray.size(); ++i)
+				{
+					JsonArray query = queryArray.getJsonArray(i);
+
+					String queryName = query.getString(0);
+					String startTag = query.getString(1);
+					String endTag = query.getString(2);
+					String prefix = query.getString(3);
+					String suffix = query.getString(4);
+
+					userQueryList.add(new SearchQuery(queryName, startTag, endTag, prefix, suffix));
+				}
+			}
+			catch (Exception e) { // don't do a thing, user did not specify any query.
+			}
+
 			ArrayList<PageData> pageDataList = Crawler.crawl(givenUrl, maxWebPagesToVisit, userQueryList);
 
 			JsonObject obj = OutputJson.jsonWebPages(pageDataList);
 			return Response.ok(obj).build();
+
 		}
 		catch (Exception e) {
 			// e.printStackTrace();

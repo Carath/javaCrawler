@@ -38,6 +38,16 @@ On the other hand, one could test the request part without any shell command (on
 http://localhost:8080/crawler/api/mock
 ```
 
+Finally, below is a more sophisticated example where an user can specify custom queries for the crawling phase:
+
+```sh
+curl -w '\n' -X POST -H "Content-Type: application/json" \
+ --data '{"url": "https://en.wikipedia.org/wiki/List_of_sovereign_states", "maxWebPagesToVisit": 1, "queries": [ ["title", "title=\"", "\"", "", ""], ["country", "span id=\"", "\">", "", ""] ]}' \
+ http://localhost:8080/crawler/api/crawler
+```
+
+Precisely, queries must be of the following form: [queryName, startTag, endTag, prefix, suffix]. Note that the output of the previous commands may be saved in a file, by appending ``` > result.json``` at their end.
+
 
 ## Deployment:
 
@@ -51,5 +61,5 @@ Once the project is done, and needs to be deployed e.g on a server, java and mav
 
 ## TODO:
 
-- Add the feature to search for user given metadata during the crawling phase [mostly done, this just needs to be integrated to the API];
-- Restrict domain names for crawling;
+- Restrict domain names when crawling;
+- Use the robot.txt file on websites where is is available.
